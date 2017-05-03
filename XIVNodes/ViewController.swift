@@ -24,8 +24,6 @@ class ViewController: UIViewController {
         
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         
-        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: <#T##[String]#>)
-        
         Clock.sharedInstance.timeLabel = timeLabel
         
         Clock.sharedInstance.parentVC = self

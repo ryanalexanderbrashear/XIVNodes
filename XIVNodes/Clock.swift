@@ -14,12 +14,14 @@ class Clock {
     
     static let sharedInstance = Clock()
     
+    //Label that will display the current Eorzea time
     var timeLabel: UILabel!
-    
-    var timer: Timer!
     
     //View controller that the clock is being displayed in
     var parentVC: ViewController!
+    
+    //Timer used to update the current Eorzea time
+    var timer: Timer!
     
     var eorzeaTimeDisplayFormatter = DateFormatter()
     
