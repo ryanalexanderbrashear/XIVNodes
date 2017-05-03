@@ -12,7 +12,9 @@ import UserNotificationsUI
 
 class Clock {
     
+    ////////////////////////////////////////////////////////////////
     static let sharedInstance = Clock()
+    ////////////////////////////////////////////////////////////////
     
     //Label that will display the current Eorzea time
     var timeLabel: UILabel!
