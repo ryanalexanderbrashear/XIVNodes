@@ -14,6 +14,19 @@ extension ViewController: UNUserNotificationCenterDelegate {
     
     //for displaying notification when app is in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print("hello")
         completionHandler([.alert,.badge])
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        // Determine the user action
+        switch response.actionIdentifier {
+        default:
+            print("Stuff")
+        }
+        completionHandler()
     }
 }

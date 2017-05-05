@@ -14,7 +14,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var timeLabel: UILabel!
     
-    var nodePopTimes = ["19:00", "20:00", "21:00"]
+    var nodePopTimes = ["11:00", "12:00", "03:00", "19:00", "20:00", "21:00", "23:00", "02:00", "16:00"]
     
     var currentEorzeaHour: Int!
     var currentEorzeaMinutes: Int!

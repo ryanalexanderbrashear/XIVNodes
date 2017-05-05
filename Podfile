@@ -7,5 +7,5 @@ target 'XIVNodes' do
 
   # Pods for XIVNodes	
 	pod 'Firebase/Core'
-
+	pod ‘Firebase/Database’
 end

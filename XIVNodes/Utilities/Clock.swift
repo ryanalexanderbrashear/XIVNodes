@@ -9,6 +9,7 @@
 import Foundation
 import UserNotifications
 import UserNotificationsUI
+import FirebaseDatabase
 
 class Clock {
     
@@ -25,8 +26,10 @@ class Clock {
     //Timer used to update the current Eorzea time
     var timer: Timer!
     
+    //Used to format the current Eorzea time for display
     var eorzeaTimeDisplayFormatter = DateFormatter()
     
+    //The current Eorzea time, stored as Ints for hour and minute
     var currentEorzeaHour: Int!
     var currentEorzeaMinutes: Int!
     
@@ -67,8 +70,11 @@ class Clock {
         var minuteDifference = 0
 
         //Take the pop time string and break it into parts
+        print(popTime)
+        
         let time = popTime.components(separatedBy: ":")
         let popHour = Int(time[0])
+        
 
         //If we aren't at an exact hour, get the minutes until the next hour
         if currentEorzeaMinutes != 0 {
@@ -99,13 +105,21 @@ class Clock {
         scheduleNotification(timeInterval: notificationTime)
     }
     
+    //Take a node ID and get the pop times for that node and calculate which one is closest to the current time, then calculate the real world time and set up a notification for that
+    func getNextNodePopTime(nodeId: Int) {
+        //After getting the closest pop time, call calculateNodePopTime to get the real world time and set up the notification
+        calculateNodePopTime(popTime: "09:00")
+    }
+    
+    //This will also need to take a node as input so we can get the node ID
     func scheduleNotification(timeInterval: TimeInterval) {
         let notification = UNMutableNotificationContent()
         notification.title = "XIVNode"
         notification.subtitle = ""
+        notification.userInfo = ["id": "1"]
         notification.categoryIdentifier = "Alert"
         notification.sound = UNNotificationSound.default()
-        notification.body = "Node will pop soon!"
+        notification.body = "Node has popped!"
         let notificationDate = Date().addingTimeInterval(timeInterval)
         let notificationTime = notificationDate.timeIntervalSinceNow
         
