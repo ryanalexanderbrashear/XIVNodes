@@ -8,7 +8,6 @@
 
 import UIKit
 import UserNotifications
-import UserNotificationsUI
 import Firebase
 
 @UIApplicationMain

@@ -21,7 +21,7 @@ class Clock {
     var timeLabel: UILabel!
     
     //View controller that the clock is being displayed in
-    var parentVC: ViewController!
+    var parentVC: ClockViewController!
     
     //Timer used to update the current Eorzea time
     var timer: Timer!
@@ -70,17 +70,16 @@ class Clock {
         var minuteDifference = 0
 
         //Take the pop time string and break it into parts
-        print(popTime)
-        
         let time = popTime.components(separatedBy: ":")
         let popHour = Int(time[0])
-        
-
+    
         //If we aren't at an exact hour, get the minutes until the next hour
         if currentEorzeaMinutes != 0 {
             minuteDifference = 60 - currentEorzeaMinutes!
         }
-
+        
+        
+        //Get the number of hours until the node spawns
         if popHour! > currentEorzeaHour {
             hourDifference = popHour! - currentEorzeaHour
         } else {
@@ -104,19 +103,15 @@ class Clock {
         //Schedule a notification using that time interval
         scheduleNotification(timeInterval: notificationTime)
     }
-    
-    //Take a node ID and get the pop times for that node and calculate which one is closest to the current time, then calculate the real world time and set up a notification for that
-    func getNextNodePopTime(nodeId: Int) {
-        //After getting the closest pop time, call calculateNodePopTime to get the real world time and set up the notification
-        calculateNodePopTime(popTime: "09:00")
-    }
-    
+        
     //This will also need to take a node as input so we can get the node ID
     func scheduleNotification(timeInterval: TimeInterval) {
         let notification = UNMutableNotificationContent()
         notification.title = "XIVNode"
         notification.subtitle = ""
-        notification.userInfo = ["id": "1"]
+        
+        //The ID of the node will be added to the notification's userInfo dictionary for lookup when a notification is received
+        notification.userInfo = ["id": 1]
         notification.categoryIdentifier = "Alert"
         notification.sound = UNNotificationSound.default()
         notification.body = "Node has popped!"
@@ -124,8 +119,6 @@ class Clock {
         let notificationTime = notificationDate.timeIntervalSinceNow
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: notificationTime, repeats: false)
-        
-        //TODO: Change the identifier here to something that can easily identify the node (perhaps ID when we get the backend working. Will be used to look up the node and get the next spawn time for scheduling the next notification
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: notification, trigger: trigger)
         UNUserNotificationCenter.current().delegate = parentVC
         UNUserNotificationCenter.current().add(request)
