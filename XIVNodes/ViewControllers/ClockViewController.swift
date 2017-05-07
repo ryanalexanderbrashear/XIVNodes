@@ -20,10 +20,7 @@ class ClockViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        
-        let node = Node(id: 1, spawnTimes: ["03:00"])
+        let node = Node(id: 1, spawnTimes: ["12:00"])
         
         Datastore.sharedInstance.nodes.append(node)
         
