@@ -37,6 +37,8 @@ class Clock {
         eorzeaTimeDisplayFormatter.dateFormat = "hh:mm a"
         eorzeaTimeDisplayFormatter.timeZone = TimeZone(abbreviation: "GMT")
         
+        NotificationCenter.default.addObserver(self, selector: #selector(scheduleNotification(_:)), name: NSNotification.Name(rawValue: "scheduleNodeNotification"), object: nil)
+        
         timer = Timer.scheduledTimer(timeInterval: (35/12), target: self, selector: #selector(calculateEorzeaTime), userInfo: nil, repeats: true)
     }
     
@@ -64,7 +66,8 @@ class Clock {
     }
     
     //Takes an Eorzean time in 24 hour format (as a String) and converts it into a time interval used to schedule notifications
-    func calculateNodePopTime(popTime: String) {
+    func calculateNodePopTime(popTime: String) -> TimeInterval {
+        
         //Difference between pop time and current Eorzea time
         var hourDifference = 0
         var minuteDifference = 0
@@ -72,15 +75,18 @@ class Clock {
         //Take the pop time string and break it into parts
         let time = popTime.components(separatedBy: ":")
         let popHour = Int(time[0])
+        let popMinutes = Int(time[1])
     
-        //If we aren't at an exact hour, get the minutes until the next hour
-        if currentEorzeaMinutes != 0 {
-            minuteDifference = 60 - currentEorzeaMinutes!
+        //Get the number of minutes until the node spawns
+        if popMinutes! >= currentEorzeaMinutes {
+            minuteDifference = popMinutes! - currentEorzeaMinutes
+        } else {
+            minuteDifference = 60 - (currentEorzeaMinutes - popMinutes!)
         }
         
         
         //Get the number of hours until the node spawns
-        if popHour! > currentEorzeaHour {
+        if popHour! >= currentEorzeaHour {
             hourDifference = popHour! - currentEorzeaHour
         } else {
             hourDifference = 24 - (currentEorzeaHour - popHour!)
@@ -100,22 +106,28 @@ class Clock {
         //Create a time interval from the seconds for the hours and minutes
         let notificationTime = TimeInterval(hourTimeInterval + Int(minuteTimeInterval))
         
-        //Schedule a notification using that time interval
-        scheduleNotification(timeInterval: notificationTime)
+        return notificationTime
     }
         
     //This will also need to take a node as input so we can get the node ID
-    func scheduleNotification(timeInterval: TimeInterval) {
+    @objc func scheduleNotification(_ notification: NSNotification) {
+        
+        guard let nodeID = notification.userInfo?["nodeID"] as? Int else {
+            return
+        }
+        
+        guard let nodeSpawnTimeInterval = notification.userInfo?["spawnInterval"] as? TimeInterval else {
+            return
+        }
+        
         let notification = UNMutableNotificationContent()
         notification.title = "XIVNode"
-        notification.subtitle = ""
-        
-        //The ID of the node will be added to the notification's userInfo dictionary for lookup when a notification is received
-        notification.userInfo = ["id": 1]
+        notification.subtitle = "Test"
         notification.categoryIdentifier = "Alert"
         notification.sound = UNNotificationSound.default()
-        notification.body = "Node has popped!"
-        let notificationDate = Date().addingTimeInterval(timeInterval)
+        notification.body = "Node \(String(describing: nodeID)) has popped!"
+        let notificationDate = Date().addingTimeInterval(nodeSpawnTimeInterval)
+        
         let notificationTime = notificationDate.timeIntervalSinceNow
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: notificationTime, repeats: false)
